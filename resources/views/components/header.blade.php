@@ -81,72 +81,6 @@
                                     </li>
                                 </ul>
                             </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="dropdownBlog"
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Blog</a>
-                                <ul class="dropdown-menu list-unstyled" aria-labelledby="dropdownBlog">
-                                    <li>
-                                        <a href="index.html" class="dropdown-item item-anchor">Blog Classic </a>
-                                    </li>
-                                    <li>
-                                        <a href="index.html" class="dropdown-item item-anchor">Blog Grid with Sidebar
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="index.html" class="dropdown-item item-anchor">Blog Grid Four Column
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="index.html" class="dropdown-item item-anchor">Blog No Sidebar </a>
-                                    </li>
-                                    <li>
-                                        <a href="index.html" class="dropdown-item item-anchor">Blog Right Sidebar </a>
-                                    </li>
-                                    <li>
-                                        <a href="index.html" class="dropdown-item item-anchor">Single Post </a>
-                                    </li>
-                                    <li>
-                                        <a href="index.html" class="dropdown-item item-anchor">Single Post No Sidebar
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="dropdownPages"
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Pages</a>
-                                <ul class="dropdown-menu list-unstyled" aria-labelledby="dropdownPages">
-                                    <li>
-                                        <a href="index.html" class="dropdown-item item-anchor">About </a>
-                                    </li>
-                                    <li>
-                                        <a href="index.html" class="dropdown-item item-anchor">Cart </a>
-                                    </li>
-                                    <li>
-                                        <a href="index.html" class="dropdown-item item-anchor">Checkout </a>
-                                    </li>
-                                    <li>
-                                        <a href="index.html" class="dropdown-item item-anchor">Coming Soon </a>
-                                    </li>
-                                    <li>
-                                        <a href="index.html" class="dropdown-item item-anchor">Contact </a>
-                                    </li>
-                                    <li>
-                                        <a href="index.html" class="dropdown-item item-anchor">Error Page </a>
-                                    </li>
-                                    <li>
-                                        <a href="index.html" class="dropdown-item item-anchor">FAQs </a>
-                                    </li>
-                                    <li>
-                                        <a href="index.html" class="dropdown-item item-anchor">My Account </a>
-                                    </li>
-                                    <li>
-                                        <a href="index.html" class="dropdown-item item-anchor">Order Tracking </a>
-                                    </li>
-                                    <li>
-                                        <a href="index.html" class="dropdown-item item-anchor">Wishlist </a>
-                                    </li>
-                                </ul>
-                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#">Blog</a>
                             </li>
@@ -159,12 +93,30 @@
             </div>
 
             <div class="col-3 col-lg-auto">
-                <ul class="list-unstyled d-flex m-0">
-                    <li class="d-none d-lg-block">
-                        <a href="index.html" class="text-uppercase mx-3" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">Login/SignUp<span class="wishlist-count"></span>
-                        </a>
+                <ul class="list-unstyled gap-3 d-flex m-0">
+                    <li class="nav-item dropdown d-none d-lg-block">
+                        @auth
+                            <a class="nav-link dropdown-toggle text-uppercase mx-3" href="#" id="userDropdown"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Hello, {{ auth()->user()->name }}
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                <li>
+                                    <form method="POST" action="{{ route('auth.logout') }}">
+                                        @csrf
+                                        <button type="submit"
+                                            class="dropdown-item text-danger text-uppercase">Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        @else
+                            <a href="#" class="text-uppercase mx-3" data-bs-toggle="modal"
+                                data-bs-target="#exampleModal">
+                                Login/SignUp <span class="wishlist-count"></span>
+                            </a>
+                        @endauth
                     </li>
+
                     <li class="d-none d-lg-block">
                         <a href="index.html" class="text-uppercase mx-3">Wishlist <span
                                 class="wishlist-count">(0)</span>

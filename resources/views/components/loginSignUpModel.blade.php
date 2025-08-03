@@ -137,6 +137,7 @@
                 success: function(response) {
                   if (response.success) {
                     toastr.success(response.message);
+                    location.reload();
                     $('#loginForm')[0].reset();
                     $('#exampleModal').modal('hide');
                   }

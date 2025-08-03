@@ -36,11 +36,17 @@ class AuthController extends Controller
         $validated = $request->validated();
 
         if (Auth::attempt(['email' => $validated['email'], 'password' => $validated['password']])) {
-            return response()->json([
-                'success' => true, 
-                'message' => 'Login successful.', 
-                'data' => Auth::user() ], 200
-            );
+            $user = Auth::user();
+
+            if($user->role === 'admin') {
+                return redirect('/admin/dashboard')->with('success', 'Login successfully.');
+            } else {
+                return response()->json([
+                    'success' => true, 
+                    'message' => 'Login successfully.', 
+                    'data' => Auth::user() 
+                ], 200);
+            }
         } else {
             return response()->json([
                 'success' => false, 
@@ -53,10 +59,6 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
-        return response()->json([
-            'success' => true, 
-            'message' => 'Logout successful.', 
-            'data' => null ], 200
-        );
+        return redirect('/')->with('success', 'Logout successfully.');
     }
 }
