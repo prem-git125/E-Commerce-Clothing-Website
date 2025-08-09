@@ -9,7 +9,10 @@
  <link
      href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Marcellus&display=swap"
      rel="stylesheet">
-<!-- Toastr CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+     
+ <!-- Toastr CSS -->
+ {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" /> --}}
 
-
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.2.0-beta/noty.min.css"
+     integrity="sha512-D0gXbiYb16vE0HqJ9rq28MdrbhTuQ2t6hUO+dmcq0ZX7HShqh5oXZOnZ1t5gXH6FcXn8+79R9TYtyOEZQfKrVw=="
+     crossorigin="anonymous" referrerpolicy="no-referrer" />

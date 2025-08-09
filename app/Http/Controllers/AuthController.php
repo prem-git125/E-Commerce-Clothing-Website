@@ -38,15 +38,12 @@ class AuthController extends Controller
         if (Auth::attempt(['email' => $validated['email'], 'password' => $validated['password']])) {
             $user = Auth::user();
 
-            if($user->role === 'admin') {
-                return redirect('/admin/dashboard')->with('success', 'Login successfully.');
-            } else {
-                return response()->json([
-                    'success' => true, 
-                    'message' => 'Login successfully.', 
-                    'data' => Auth::user() 
-                ], 200);
-            }
+            return response()->json([
+                'success' => true, 
+                'message' => 'Login successfully.', 
+                'role' => $user->role 
+            ], 200);
+            
         } else {
             return response()->json([
                 'success' => false, 

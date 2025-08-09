@@ -29,14 +29,14 @@
                             <h5 class="fw-semibold text-uppercase">Login to your account</h5>
                         </div>
                         <form id="loginForm" class="d-grid gap-3"> @csrf
-                          <div class="mb-3">
-                            <input type="email" name="email" placeholder="Email" class="form-control">
-                            <span class="invalid-feedback d-block small error-email"></span>
-                          </div>
-                          <div class="mb-3">
-                            <input type="password" name="password" placeholder="Password" class="form-control">
-                            <span class="invalid-feedback d-block small error-password"></span>
-                          </div>
+                            <div class="mb-3">
+                                <input type="email" name="email" placeholder="Email" class="form-control">
+                                <span class="invalid-feedback d-block small error-email"></span>
+                            </div>
+                            <div class="mb-3">
+                                <input type="password" name="password" placeholder="Password" class="form-control">
+                                <span class="invalid-feedback d-block small error-password"></span>
+                            </div>
                             <button type="submit" class="btn btn-dark w-100 text-uppercase">Login</button>
                         </form>
                     </div>
@@ -97,6 +97,7 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
+            
             $('#signupForm').on('submit', function(event) {
                 event.preventDefault();
                 $.ajax({
@@ -107,52 +108,56 @@
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     success: function(response) {
-                      if (response.success) {
-                        toastr.success(response.message);
-                        $('#signupForm')[0].reset();
-                        $('#exampleModal').modal('hide');
-                      }
+                        if (response.success) {
+                            toastr.success(response.message);
+                            $('#signupForm')[0].reset();
+                            $('#exampleModal').modal('hide');
+                        }
                     },
                     error: function(xhr) {
-                      if (xhr.status == 422) {
-                        const errors = xhr.responseJSON.errors;
-                        console.log(errors);
-                        $('.error-name').text(errors.name);
-                        $('.error-email').text(errors.email);
-                        $('.error-password').text(errors.password);
-                        $('.error-password_confirmation').text(errors.password);
-                      } else {
-                        toastr.error('Something went wrong');
-                      }
+                        if (xhr.status == 422) {
+                            const errors = xhr.responseJSON.errors;
+                            console.log(errors);
+                            $('.error-name').text(errors.name);
+                            $('.error-email').text(errors.email);
+                            $('.error-password').text(errors.password);
+                            $('.error-password_confirmation').text(errors.password);
+                        } else {
+                            toastr.error('Something went wrong');
+                        }
                     }
                 });
             })
 
             $('#loginForm').on('submit', function(event) {
-              event.preventDefault();
-              $.ajax({
-                url: "{{ route('auth.login') }}",
-                method: "POST",
-                data: $(this).serialize(),
-                success: function(response) {
-                  if (response.success) {
-                    toastr.success(response.message);
-                    location.reload();
-                    $('#loginForm')[0].reset();
-                    $('#exampleModal').modal('hide');
-                  }
-                },
-                error: function(xhr) {
-                  if (xhr.status == 422) {
-                    const errors = xhr.responseJSON.errors;
-                    console.log(errors);
-                    $('.error-email').text(errors.email);
-                    $('.error-password').text(errors.password);
-                  } else {
-                    toastr.error('Something went wrong');
-                  }
-                }
-              })
+                event.preventDefault();
+                $.ajax({
+                    url: "{{ route('auth.login') }}",
+                    method: "POST",
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                          toastr.success(response.message);
+                          if (response.role == 'admin') {
+                            location.href = "{{ route('admin.dashboard') }}";
+                          } else {
+                            location.reload();
+                          }
+                          $('#loginForm')[0].reset();
+                          $('#exampleModal').modal('hide');
+                        }
+                    },
+                    error: function(xhr) {
+                        if (xhr.status == 422) {
+                            const errors = xhr.responseJSON.errors;
+                            console.log(errors);
+                            $('.error-email').text(errors.email);
+                            $('.error-password').text(errors.password);
+                        } else {
+                            toastr.error('Something went wrong');
+                        }
+                    }
+                })
             });
         })
     </script>
