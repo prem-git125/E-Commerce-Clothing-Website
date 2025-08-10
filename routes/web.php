@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
@@ -11,11 +12,28 @@ Route::get('/', function () {
 });
 
 Route::prefix('admin')->group(function () {
+    
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/users', [UserController::class, 'index'])->name('admin.users');
     Route::get('/users/data', [UserController::class, 'users'])->name('admin.users.data');
-    Route::get('/categories', [ CategoryController::class, 'index'])->name('admin.categories');
-    Route::post('/category/store', [CategoryController::class, 'store'])->name('admin.category.store');
+
+    Route::prefix('category')->group(function () {
+        Route::get('/', [ CategoryController::class, 'index'])->name('admin.categories');
+        Route::post('/store', [CategoryController::class, 'store'])->name('admin.category.store');
+        Route::get('/data', [CategoryController::class, 'categories'])->name('admin.categories.data');
+        Route::put('/update/{id}', [CategoryController::class, 'update'])->name('admin.category.update');
+        Route::delete('/destroy/{id}', [CategoryController::class, 'destroy'])->name('admin.category.destroy');
+    });
+    
+    Route::prefix('product')->group(function () {
+        Route::get('/', [ProductController::class, 'index'])->name('admin.product.index');
+        Route::get('/create', [ProductController::class, 'create'])->name('admin.product.create');
+        Route::post('/store', [ProductController::class, 'store'])->name('admin.product.store');
+        Route::get('/data', [ProductController::class, 'products'])->name('admin.product.data');
+        Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('admin.product.edit');
+        Route::put('/update/{id}', [ProductController::class, 'update'])->name('admin.product.update');
+        Route::delete('/destroy/{id}', [ProductController::class, 'destroy'])->name('admin.product.destroy');
+    });
 });
 
 Route::prefix('auth')->group(function () {

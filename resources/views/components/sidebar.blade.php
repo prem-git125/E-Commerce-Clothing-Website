@@ -3,6 +3,7 @@
         ['name' => 'Dashboard', 'route' => 'admin.dashboard', 'icon' => 'bi bi-speedometer2'],
         ['name' => 'Users', 'route' => 'admin.users', 'icon' => 'bi bi-people'],
         ['name' => 'Categories', 'route' => 'admin.categories', 'icon' => 'bi bi-tags'],
+        ['name' => 'Products', 'route' => 'admin.product.index', 'icon' => 'bi bi-bag'],
     ];
 @endphp
 

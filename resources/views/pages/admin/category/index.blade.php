@@ -12,38 +12,16 @@
         <table id="datatable" class="table my-4" style="width:100%">
             <thead class="table-dark">
                 <tr>
-                    <td></td>
+                    <td>Name</td>
+                    <td>Slug</td>
+                    <td>Actions</td>
                 </tr>
             </thead>
         </table>
     </div>
 
-    <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Create Category</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="{{ route('admin.category.store') }}" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                                id="categoryName" value="{{ old('name') }}" placeholder="Category Name">
-                            @error('name')
-                                <span class="invalid-feedback d-block small error-name">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    @include('components.admin.category.modal')
+
 @endsection
 
 @push('admin-scripts')
@@ -55,10 +33,92 @@
                 }
             });
 
-            // $('#datatable').DataTable({
-            //     processing: true,
-            //     serverSide: true,
-            // });
+            $('#datatable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('admin.categories.data') }}",
+                    type: "GET"
+                },
+                columns: [{
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'slug',
+                        name: 'slug'
+                    },
+                    {
+                        data: 'id',
+                        name: 'actions',
+                        orderable: false,
+                        searchable: false,
+                        render(data, type, row) {
+                            return `
+                                <button class="btn btn-sm btn-outline-primary editBtn" data-id="${data}" data-name="${row.name}">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <form class="deleteForm d-inline" data-id="${data}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash3-fill"></i>
+                                    </button>
+                                </form>
+                            `;
+                        },
+                    }
+                ],
+                order: [
+                    [0, 'desc']
+                ],
+                pageLength: 10
+            });
+
+            $(document).on('click', '.editBtn', function() {
+                let id = $(this).data('id');
+                let name = $(this).data('name');
+                $('#categoryId').val(id);
+                $('#categoryName').val(name);
+                $('#modalLabel').text('Edit Category');
+                $('#categoryModal').modal('show');
+            })
+
+            $(document).on('submit', '.deleteForm', function(e) {
+                e.preventDefault();
+                let form = $(this);
+                let id = form.data('id');
+                let url = "{{ route('admin.category.destroy', ':id') }}".replace(':id', id);
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            data: form.serialize(),
+                            success: function(response) {
+                                Swal.fire({
+                                    title: "Deleted!",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                $('#datatable').DataTable().ajax.reload();
+                            },
+                            error: function(xhr) {
+                                console.log(xhr.responseText);
+                            }
+                        });
+                    }
+                });
+            });
         })
     </script>
 @endpush
