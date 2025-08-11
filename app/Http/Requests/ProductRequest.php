@@ -28,7 +28,8 @@ class ProductRequest extends FormRequest
             'price' => ['required', 'numeric'],
             'stock' => ['required', 'numeric'],
             'type' => ['required', 'string', 'in:men,female,kids,unisex,accessories'],
-            'image_url' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'image_url' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'base_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ];
     }
 
@@ -45,10 +46,12 @@ class ProductRequest extends FormRequest
             'stock.numeric' => 'Stock must be a number',
             'type.required' => 'Type is required',
             'type.in' => 'Type must be one of: men, female, kids, unisex, accessories',
-            'image_url.required' => 'Image is required',
             'image_url.image' => 'Image must be an image',
             'image_url.mimes' => 'Image must be a JPEG, PNG, JPG, or GIF',
             'image_url.max' => 'Image must be less than 2MB',
+            'base_image.image' => 'Base Image must be an image',
+            'base_image.mimes' => 'Base Image must be a JPEG, PNG, JPG, or GIF',
+            'base_image.max' => 'Base Image must be less than 2MB',
         ];
     }
 }

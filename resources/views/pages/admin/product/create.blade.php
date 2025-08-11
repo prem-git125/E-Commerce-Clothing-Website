@@ -72,6 +72,15 @@
         </div>
 
         <div class="col-md-4">
+            <label for="productBaseImg" class="form-label">Base Image</label>
+            <input type="file" name="base_image" class="form-control @error('base_image') is-invalid @enderror"
+                id="productBaseImg">
+            @error('base_image')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="col-md-4">
             <label for="productStock" class="form-label">Stock</label>
             <input type="number" name="stock" value="{{ old('stock') }}"
                 class="form-control @error('stock') is-invalid @enderror" id="productStock" placeholder="Stock">

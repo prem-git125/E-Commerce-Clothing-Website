@@ -32,7 +32,7 @@
                 }
             });
 
-            $('#datatable').DataTable({
+            let table = $('#datatable').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
@@ -65,19 +65,21 @@
                         orderable: false,
                         searchable: false,
                         render(data, type, row) {
-                           let url = "{{ route('admin.product.edit', ':id') }}".replace(':id', data);
+                            let url = "{{ route('admin.product.edit', ':id') }}".replace(':id', data);
+                            let urlDelete = "{{ route('admin.product.destroy', ':id') }}".replace(':id',
+                                data);
                             return `
-                                <a href="${url}" class="btn btn-sm btn-outline-primary editBtn">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
-                                <form class="deleteForm d-inline" data-id="${data}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="bi bi-trash3-fill"></i>
-                                    </button>
-                                </form>
-                            `;
+                            <a href="${url}" class="btn btn-sm btn-outline-primary editBtn">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <form action="${urlDelete}" method="POST" class="deleteForm d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash3-fill"></i>
+                                </button>
+                            </form>
+                        `;
                         },
                     }
                 ],
@@ -86,6 +88,48 @@
                 ],
                 pageLength: 10
             });
-        })
+
+            $(document).on('submit', '.deleteForm', function(e) {
+                e.preventDefault();
+                let form = $(this);
+                let deleteUrl = form.attr('action');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This will permanently delete the product!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: deleteUrl,
+                            type: 'POST',
+                            data: form.serialize(),
+                            success: function(response) {
+                                Swal.fire({
+                                    title: 'Deleted!',
+                                    text: response?.message,
+                                    icon: 'success',
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+                                table.ajax.reload(null, false);
+                            },
+                            error: function(xhr) {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: xhr.responseJSON?.message ||
+                                        'Something went wrong.',
+                                    icon: 'error'
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
     </script>
 @endpush

@@ -24,8 +24,9 @@ class ProductController extends Controller
 
     public function edit($id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::where('id', $id)->first();
         $categories = Category::all();
+        // dd($product->images->);
         return view('pages.admin.product.update', compact('product', 'categories'));
     }
 
@@ -73,9 +74,14 @@ class ProductController extends Controller
     {
         $validated = $request->validated();
 
-        if($request->hasFile('image_url')) {
+        if ($request->hasFile('image_url')) {
             $imagePath = $request->file('image_url')->store('products', 'public');
             $validated['image_url'] = $imagePath;
+        }
+
+        if($request->hasFile('base_image')) {
+            $baseImagePath = $request->file('base_image')->store('products', 'public');
+            $validated['base_image'] = $baseImagePath;
         }
 
         $product = Product::create([
@@ -85,6 +91,7 @@ class ProductController extends Controller
             'price' => $validated['price'],
             'stock' => $validated['stock'],
             'type' => $validated['type'],
+            'base_image' => $validated['base_image'],
         ]);
 
         ProductImage::create([
@@ -97,7 +104,7 @@ class ProductController extends Controller
 
     public function update(ProductRequest $request, $id)
     {
-        $validated = $request->validated(); 
+        $validated = $request->validated();
 
         $product = Product::findOrFail($id);
 
@@ -131,5 +138,4 @@ class ProductController extends Controller
         $product->delete();
         return redirect()->route('admin.product.index')->with('success', 'Product deleted successfully.');
     }
-
 }
