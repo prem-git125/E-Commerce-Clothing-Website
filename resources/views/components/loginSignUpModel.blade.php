@@ -51,23 +51,23 @@
 
                             <div class="mb-2">
                                 <input type="text" name="name" placeholder="Name" class="form-control">
-                                <span class="invalid-feedback d-block small error-name"></span>
+                                <span class="invalid-feedback d-block small reg-error-name"></span>
                             </div>
 
                             <div class="mb-2">
                                 <input type="email" name="email" placeholder="Email" class="form-control">
-                                <span class="invalid-feedback d-block small error-email"></span>
+                                <span class="invalid-feedback d-block small reg-error-email"></span>
                             </div>
 
                             <div class="mb-2">
                                 <input type="password" name="password" placeholder="Password" class="form-control">
-                                <span class="invalid-feedback d-block small error-password"></span>
+                                <span class="invalid-feedback d-block small reg-error-password"></span>
                             </div>
 
                             <div class="mb-2">
                                 <input type="password" name="password_confirmation" placeholder="Confirm Password"
                                     class="form-control">
-                                <span class="invalid-feedback d-block small error-password_confirmation"></span>
+                                <span class="invalid-feedback d-block small reg-error-password_confirmation"></span>
                             </div>
 
                             <button type="submit" class="btn btn-dark w-100 text-uppercase">Sign Up</button>
@@ -118,10 +118,10 @@
                         if (xhr.status == 422) {
                             const errors = xhr.responseJSON.errors;
                             console.log(errors);
-                            $('.error-name').text(errors.name);
-                            $('.error-email').text(errors.email);
-                            $('.error-password').text(errors.password);
-                            $('.error-password_confirmation').text(errors.password);
+                            $('.reg-error-name').text(errors.name);
+                            $('.reg-error-email').text(errors.email);
+                            $('.reg-error-password').text(errors.password);
+                            $('.reg-error-password_confirmation').text(errors.password);
                         } else {
                             toastr.error('Something went wrong');
                         }
