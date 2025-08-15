@@ -23,6 +23,8 @@ class CategoryRequest extends FormRequest
     {
         return [
             'name' => ['required', 'unique:categories,name'],
+            'url' => ['nullable', 'string'],
+            'img' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
         ];
     }
 
@@ -31,6 +33,10 @@ class CategoryRequest extends FormRequest
         return [
             'name.required' => 'Name is required',
             'name.unique' => 'Name already exists',
+            'img.image' => 'The file must be an image',
+            'img.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif, svg',
+            'img.max' => 'The image may not be greater than 2MB',
+            'url.string' => 'The URL must be a string',
         ];
     }
 }

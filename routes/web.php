@@ -7,8 +7,15 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\User\ProductController as UserProductController;
+
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::prefix('product')->group(function () {
+    Route::get('/{id}', [UserProductController::class, 'index'])->name('user.product.index');
+    Route::get('/single/{id}', [UserProductController::class, 'show'])->name('user.product.show');
 });
 
 Route::prefix('admin')->group(function () {

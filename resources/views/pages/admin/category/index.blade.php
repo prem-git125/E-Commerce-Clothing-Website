@@ -55,7 +55,7 @@
                         searchable: false,
                         render(data, type, row) {
                             return `
-                                <button class="btn btn-sm btn-outline-primary editBtn" data-id="${data}" data-name="${row.name}">
+                                <button class="btn btn-sm btn-outline-primary editBtn" data-id="${data}" data-name="${row.name}" data-img="${row.img}">
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
                                 <form class="deleteForm d-inline" data-id="${data}">

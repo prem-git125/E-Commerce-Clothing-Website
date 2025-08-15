@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -57,8 +58,14 @@ class CategoryController extends Controller
     {
         $validated = $request->validated();
 
+        if($request->hasFile('img')) {
+            $imgPath = $request->file('img')->store('categories', 'public');
+            $validated['img'] = $imgPath;
+        }
+
         Category::create([
             'name' => $validated['name'],
+            'img' => $validated['img'],
         ]);
 
         return response()->json([
@@ -80,8 +87,17 @@ class CategoryController extends Controller
             ]);
         }
 
+        if($request->hasFile('img')) {
+            if($category->img && Storage::disk('public')->exists($category->img)) {
+                Storage::disk('public')->delete($category->img);
+            }
+            $imgPath = $request->file('img')->store('categories', 'public');
+            $validated['img'] = $imgPath;
+        }
+
         $category->update([
             'name' => $validated['name'],
+            'img' => $validated['img'] ?? $category->img,
         ]);
 
         $category->save();

@@ -64,8 +64,8 @@
 
         <div class="col-md-4">
             <label for="productImage" class="form-label">Image</label>
-            <input type="file" name="image_url" class="form-control @error('image_url') is-invalid @enderror"
-                id="productImage">
+            <input type="file" name="image_url[]" class="form-control @error('image_url') is-invalid @enderror"
+                id="productImage" multiple>
             @error('image_url')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror

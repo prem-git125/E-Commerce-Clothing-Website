@@ -74,16 +74,6 @@ class ProductController extends Controller
     {
         $validated = $request->validated();
 
-        if ($request->hasFile('image_url')) {
-            $imagePath = $request->file('image_url')->store('products', 'public');
-            $validated['image_url'] = $imagePath;
-        }
-
-        if($request->hasFile('base_image')) {
-            $baseImagePath = $request->file('base_image')->store('products', 'public');
-            $validated['base_image'] = $baseImagePath;
-        }
-
         $product = Product::create([
             'category_id' => $validated['category_id'],
             'name' => $validated['name'],
@@ -91,13 +81,23 @@ class ProductController extends Controller
             'price' => $validated['price'],
             'stock' => $validated['stock'],
             'type' => $validated['type'],
-            'base_image' => $validated['base_image'],
         ]);
 
-        ProductImage::create([
-            'product_id' => $product->id,
-            'image_url' => $validated['image_url'],
-        ]);
+        if($request->hasFile('base_image')) {
+            $baseImagePath = $request->file('base_image')->store('products', 'public');
+            $validated['base_image'] = $baseImagePath;
+            $product->update(['base_image' => $baseImagePath]);
+        }
+
+        if($request->hasFile('image_url')) {
+            foreach ($validated['image_url'] as $image) {
+                $imagePath = $image->store('products', 'public');
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_url' => $imagePath,
+                ]);
+            }
+        }
 
         return redirect()->route('admin.product.index')->with('success', 'Product created successfully.');
     }
@@ -108,25 +108,28 @@ class ProductController extends Controller
 
         $product = Product::findOrFail($id);
 
-        if ($request->hasFile('image_url')) {
-            $imagePath = $request->file('image_url')->store('products', 'public');
-            $validated['image_url'] = $imagePath;
-        }
-
         $product->update([
             'category_id' => $validated['category_id'],
-            'name'        => $validated['name'],
+            'name' => $validated['name'],
             'description' => $validated['description'],
-            'price'       => $validated['price'],
-            'stock'       => $validated['stock'],
-            'type'        => $validated['type'],
+            'price' => $validated['price'],
+            'stock' => $validated['stock'],
+            'type' => $validated['type'],
         ]);
 
-        if (isset($validated['image_url'])) {
-            ProductImage::updateOrCreate(
-                ['product_id' => $product->id],
-                ['image_url'  => $validated['image_url']]
-            );
+        if ($request->hasFile('base_image')) {
+            $baseImagePath = $request->file('base_image')->store('products', 'public');
+            $product->update(['base_image' => $baseImagePath]);
+        }
+
+        if ($request->hasFile('image_url')) {
+            foreach ($request->file('image_url') as $file) {
+                $imagePath = $file->store('products', 'public');
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_url'  => $imagePath,
+                ]);
+            }
         }
 
         return redirect()->route('admin.product.index')->with('success', 'Product updated successfully.');

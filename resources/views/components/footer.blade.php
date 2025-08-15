@@ -5,7 +5,7 @@
           <div class="footer-menu footer-menu-001">
             <div class="footer-intro mb-4">
               <a href="index.html">
-                <img src="images/main-logo.png" alt="logo">
+                <img src="{{asset('images/main-logo.png')}}" alt="logo">
               </a>
             </div>
             <p>Gravida massa volutpat aenean odio. Amet, turpis erat nullam fringilla elementum diam in. Nisi, purus
@@ -116,14 +116,14 @@
           <div class="col-md-6 d-flex flex-wrap">
             <div class="shipping">
               <span>We ship with:</span>
-              <img src="images/arct-icon.png" alt="icon">
-              <img src="images/dhl-logo.png" alt="icon">
+              <img src="{{asset('images/arct-icon.png')}}" alt="icon">
+              <img src="{{asset('images/dhl-logo.png')}}" alt="icon">
             </div>
             <div class="payment-option">
               <span>Payment Option:</span>
-              <img src="images/visa-card.png" alt="card">
-              <img src="images/paypal-card.png" alt="card">
-              <img src="images/master-card.png" alt="card">
+              <img src="{{asset('images/visa-card.png')}}" alt="card">
+              <img src="{{asset('images/paypal-card.png')}}" alt="card">
+              <img src="{{asset('images/master-card.png')}}" alt="card">
             </div>
           </div>
           <div class="col-md-6 text-end">
