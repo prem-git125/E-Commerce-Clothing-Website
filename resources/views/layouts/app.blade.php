@@ -228,7 +228,7 @@
 
     @include('components.header')
 
-    <div class="content">
+    <div class="content bg-light">
         @yield('content')
     </div>
 

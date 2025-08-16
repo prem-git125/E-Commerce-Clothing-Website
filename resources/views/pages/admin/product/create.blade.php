@@ -41,7 +41,7 @@
         <div class="col-md-12">
             <label for="productDesc" class="form-label">Description</label>
             <textarea name="description" class="form-control @error('description') is-invalid @enderror" id="productDesc"
-                rows="3" placeholder="Description">{{ old('description') }}</textarea>
+                rows="5" placeholder="Description">{{ old('description') }}</textarea>
             @error('description')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -94,3 +94,14 @@
         </div>
     </form>
 @endsection
+
+@push('admin-scripts')
+    <!-- Include CKEditor CDN -->
+    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('productDesc', {
+            height: 200,
+            removeButtons: 'PasteFromWord'
+        });
+    </script>
+@endpush

@@ -109,3 +109,14 @@
         </div>
     </form>
 @endsection
+
+@push('admin-scripts')
+    <!-- Include CKEditor CDN -->
+    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('productDesc', {
+            height: 200,
+            removeButtons: 'PasteFromWord'
+        });
+    </script>
+@endpush

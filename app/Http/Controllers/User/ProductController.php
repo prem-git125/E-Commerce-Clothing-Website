@@ -17,7 +17,7 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = Product::with('images')->findOrFail($id);
-        dd($product->toArray());
+        // dd($product->toArray());
         return view('pages.product.show', compact('product'));
     }
 }

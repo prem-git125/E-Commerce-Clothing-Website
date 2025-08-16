@@ -47,4 +47,6 @@ Route::prefix('auth')->group(function () {
    Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
    Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
    Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+   Route::get('/profile', [AuthController::class, 'profile'])->name('auth.profile');
+   Route::post('/profile-image/update', [AuthController::class, 'updateProfileImage'])->name('auth.profile.image.update');
 });

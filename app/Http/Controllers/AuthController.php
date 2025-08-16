@@ -58,4 +58,44 @@ class AuthController extends Controller
         Auth::logout();
         return redirect('/')->with('success', 'Logout successfully.');
     }
+
+    public function profile()
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return redirect()->route('auth.login')->with('error', 'You need to login first.');
+        }
+
+        return view('pages.profile.index', compact('user'));
+    }
+
+    public function updateProfileImage(Request $request)
+    {
+        $request->validate([
+            'profile_url' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $user = Auth::user();
+
+        if(!$user) {
+            return response()->json(['success' => false, 'message' => 'User not authenticated.'], 401);
+        }
+
+        if ($request->hasFile('profile_url')) {
+            $file = $request->file('profile_url');
+            $path = $file->store('profile_images', 'public');
+
+            // Update user's profile_url
+            $user->profile_url = $path;
+            $user->save();
+
+            return response()->json([
+                'success' => true, 
+                'message' => 'Profile image updated successfully.', 
+            ], 200);
+        } else {
+            return response()->json(['success' => false, 'message' => 'No file uploaded.'], 400);
+        }
+    }
 }
