@@ -31,6 +31,8 @@ class ProductRequest extends FormRequest
             'base_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'image_url' => ['nullable','array'],
             'image_url.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'size_id' => ['required', 'exists:sizes,id'], 
+            'product_id' => ['required', 'exists:products,id'],
         ];
     }
 
@@ -53,6 +55,10 @@ class ProductRequest extends FormRequest
             'image_url.image' => 'Image must be an image',
             'image_url.mimes' => 'Image must be a JPEG, PNG, JPG, or GIF',
             'image_url.max' => 'Image must be less than 2MB',
+            'size_id.required' => 'Size is required',
+            'size_id.exists' => 'Selected size does not exist',
+            'product_id.required' => 'Product is required',
+            'product_id.exists' => 'Selected product does not exist',
         ];
     }
 }

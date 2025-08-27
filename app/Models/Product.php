@@ -34,6 +34,11 @@ class Product extends Model
         return $this->hasMany(ProductImage::class);
     }
 
+    public function varients()
+    {
+        return $this->hasMany(ProductVarient::class);
+    }
+
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()->generateSlugsFrom('name')->saveSlugsTo('slug');

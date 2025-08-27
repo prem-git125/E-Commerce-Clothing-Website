@@ -7,6 +7,8 @@ use App\Http\Requests\ProductRequest;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\ProductVarient;
+use App\Models\Size;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -19,7 +21,8 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('pages.admin.product.create', compact('categories'));
+        $sizes = Size::all();
+        return view('pages.admin.product.create', compact('categories', 'sizes'));
     }
 
     public function edit($id)
@@ -79,7 +82,6 @@ class ProductController extends Controller
             'name' => $validated['name'],
             'description' => $validated['description'],
             'price' => $validated['price'],
-            'stock' => $validated['stock'],
             'type' => $validated['type'],
         ]);
 
@@ -98,6 +100,12 @@ class ProductController extends Controller
                 ]);
             }
         }
+
+        ProductVarient::create([
+            'product_id' => $product->id,
+            'size_id' => $validated['size_id'],
+            'stock' => $validated['stock'],
+        ]);
 
         return redirect()->route('admin.product.index')->with('success', 'Product created successfully.');
     }
