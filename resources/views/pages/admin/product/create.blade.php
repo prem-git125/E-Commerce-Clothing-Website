@@ -1,122 +1,83 @@
 @extends('layouts.admin')
 
 @section('content')
-    <h3>Create Product</h3>
-    <hr>
-    <form class="row g-3" method="POST" action="{{ route('admin.product.store') }}" enctype="multipart/form-data">
+<div class="container">
+    <h2 class="mb-4">Add New Product</h2>
+
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="{{ route('admin.product.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
-        <div class="col-md-3">
-            <label for="produtName" class="form-label">Name</label>
-            <input type="text" name="name" value="{{ old('name') }}"
-                class="form-control @error('name') is-invalid @enderror" id="produtName" placeholder="Product Name">
-            @error('name')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="col-md-3">
-            <label for="productPrice" class="form-label">Price</label>
-            <input type="number" step="0.01" name="price" value="{{ old('price') }}"
-                class="form-control @error('price') is-invalid @enderror" id="productPrice" placeholder="Price">
-            @error('price')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="col-md-3">
-            <label for="category" class="form-label">Select Category</label>
-            <select class="form-select @error('category_id') is-invalid @enderror" name="category_id">
+        <div class="mb-3">
+            <label for="category_id" class="form-label">Category</label>
+            <select name="category_id" id="category_id" class="form-select" required>
                 <option value="">Select Category</option>
-                @foreach ($categories as $category)
+                @foreach($categories as $category)
                     <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
                         {{ $category->name }}
                     </option>
                 @endforeach
             </select>
-            @error('category_id')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
         </div>
 
-        <div class="col-md-3">
-            <label for="size" class="form-label">Select Size</label>
-            <select class="form-select @error('size_id') is-invalid @enderror" name="size_id">
-                <option value="">Select Size</option>
-                @foreach ($sizes as $size)
-                    <option value="{{ $size->id }}" {{ old('size_id') == $size->id ? 'selected' : '' }}>
-                        {{ $size->name }}
-                    </option>
+        <!-- Product Name -->
+        <div class="mb-3">
+            <label for="name" class="form-label">Product Name</label>
+            <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea name="description" id="description" class="form-control">{{ old('description') }}</textarea>
+        </div>
+
+        <!-- Type -->
+        <div class="mb-3">
+            <label for="type" class="form-label">Type</label>
+            <input type="text" name="type" id="type" class="form-control" value="{{ old('type') }}" required>
+        </div>
+
+        <!-- Base Image -->
+        <div class="mb-3">
+            <label for="base_image" class="form-label">Base Image</label>
+            <input type="file" name="base_image" id="base_image" class="form-control" accept="image/*" required>
+        </div>
+
+        <!-- Multiple Images -->
+        <div class="mb-3">
+            <label for="images" class="form-label">Additional Images</label>
+            <input type="file" name="images[]" id="images" class="form-control" accept="image/*" multiple>
+        </div>
+
+        <!-- Sizes -->
+        <div class="mb-3">
+            <label for="size_id" class="form-label">Sizes</label>
+            <select name="size_id[]" id="select2" class="form-select" multiple required>
+                @foreach($sizes as $size)
+                    <option value="{{ $size->id }}">{{ $size->name }}</option>
                 @endforeach
             </select>
-            @error('size_id')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
         </div>
 
-        <div class="col-md-12">
-            <label for="productDesc" class="form-label">Description</label>
-            <textarea name="description" class="form-control @error('description') is-invalid @enderror" id="productDesc"
-                rows="5" placeholder="Description">{{ old('description') }}</textarea>
-            @error('description')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
+        <div id="priceStockContainer"></div>
 
-        <div class="col-md-3">
-            <label for="productCategory" class="form-label">Type</label>
-            <select class="form-select @error('type') is-invalid @enderror" name="type">
-                <option value="">Select Type</option>
-                <option value="men" {{ old('type') == 'men' ? 'selected' : '' }}>Men</option>
-                <option value="female" {{ old('type') == 'female' ? 'selected' : '' }}>Female</option>
-                <option value="kids" {{ old('type') == 'kids' ? 'selected' : '' }}>Kids</option>
-                <option value="unisex" {{ old('type') == 'unisex' ? 'selected' : '' }}>Unisex</option>
-                <option value="accessories" {{ old('type') == 'accessories' ? 'selected' : '' }}>Accessories</option>
-            </select>
-            @error('type')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="col-md-3">
-            <label for="productImage" class="form-label">Image</label>
-            <input type="file" name="image_url[]" class="form-control @error('image_url') is-invalid @enderror"
-                id="productImage" multiple>
-            @error('image_url')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="col-md-3">
-            <label for="productBaseImg" class="form-label">Base Image</label>
-            <input type="file" name="base_image" class="form-control @error('base_image') is-invalid @enderror"
-                id="productBaseImg">
-            @error('base_image')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="col-md-3">
-            <label for="productStock" class="form-label">Stock</label>
-            <input type="number" name="stock" value="{{ old('stock') }}"
-                class="form-control @error('stock') is-invalid @enderror" id="productStock" placeholder="Stock">
-            @error('stock')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="col-12 d-flex justify-content-center mt-5">
-            <button type="submit" class="btn btn-outline-primary w-50">Submit</button>
-        </div>
+        <button type="submit" class="btn btn-primary mt-3">Create Product</button>
     </form>
+</div>
+
 @endsection
 
-@push('admin-scripts')
-    <!-- Include CKEditor CDN -->
-    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
-    <script>
-        CKEDITOR.replace('productDesc', {
-            height: 200,
-            removeButtons: 'PasteFromWord'
-        });
-    </script>
-@endpush
+@section('admin-scripts')
+<script>
+
+</script>
+@endsection

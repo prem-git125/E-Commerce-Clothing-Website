@@ -22,43 +22,43 @@ class ProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category_id' => ['required', 'exists:categories,id'],
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'price' => ['required', 'numeric'],
-            'stock' => ['required', 'numeric'],
-            'type' => ['required', 'string', 'in:men,female,kids,unisex,accessories'],
-            'base_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'image_url' => ['nullable','array'],
-            'image_url.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'size_id' => ['required', 'exists:sizes,id'], 
-            'product_id' => ['required', 'exists:products,id'],
+            'category_id' => 'required|exists:categories,id',
+            'name' => 'required|string', 
+            'description' => 'nullable|string',
+            'base_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'type' => 'required|in:men,female,kids,accessories,unisex',
+            'images' => 'nullable|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'size_id' => 'nullable|array',
+            'size_id.*' => 'exists:sizes,id',
+            'price' => 'required|numeric',
+            'stock' => 'required|numeric',
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
-            'category_id.required' => 'Category is required',
-            'name.required' => 'Name is required',
-            'name.max' => 'Name must be less than 255 characters',
-            'description.required' => 'Description is required',
-            'price.required' => 'Price is required',
-            'price.numeric' => 'Price must be a number',
-            'stock.required' => 'Stock is required',
-            'stock.numeric' => 'Stock must be a number',
-            'type.required' => 'Type is required',
-            'type.in' => 'Type must be one of: men, female, kids, unisex, accessories',
-            'base_image.image' => 'Base Image must be an image',
-            'base_image.mimes' => 'Base Image must be a JPEG, PNG, JPG, or GIF',
-            'base_image.max' => 'Base Image must be less than 2MB',
-            'image_url.image' => 'Image must be an image',
-            'image_url.mimes' => 'Image must be a JPEG, PNG, JPG, or GIF',
-            'image_url.max' => 'Image must be less than 2MB',
-            'size_id.required' => 'Size is required',
-            'size_id.exists' => 'Selected size does not exist',
-            'product_id.required' => 'Product is required',
-            'product_id.exists' => 'Selected product does not exist',
+            'category_id.required' => 'The category field is required.',
+            'category_id.exists' => 'The selected category is invalid.',
+            'name.required' => 'The product name field is required.',
+            'type.required' => 'The product type field is required.',
+            'type.in' => 'The selected product type is invalid.',
+            'price.required' => 'The price field is required.',
+            'price.numeric' => 'The price must be a number.',
+            'stock.required' => 'The stock field is required.',
+            'stock.numeric' => 'The stock must be a number.',
+            'base_image.image' => 'The base image must be an image file.',
+            'base_image.mimes' => 'The base image must be a file of type: jpeg, png, jpg, gif, svg.',
+            'base_image.max' => 'The base image may not be greater than 2048 kilobytes.',
+            'images.array' => 'The images must be an array of image files.',
+            'images.*.image' => 'Each image must be an image file.',
+            'images.*.mimes' => 'Each image must be a file of type: jpeg, png, jpg, gif, svg.',
+            'images.*.max' => 'Each image may not be greater than 2048 kilobytes.',
+            'size_id.array' => 'The size field must be an array of sizes.',
+            'size_id.*.exists' => 'One or more selected sizes are invalid.',
         ];
     }
+
+    
 }

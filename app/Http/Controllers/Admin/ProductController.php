@@ -7,9 +7,11 @@ use App\Http\Requests\ProductRequest;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\ProductStockPrice;
 use App\Models\ProductVarient;
 use App\Models\Size;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -29,8 +31,8 @@ class ProductController extends Controller
     {
         $product = Product::where('id', $id)->first();
         $categories = Category::all();
-        // dd($product->images->);
-        return view('pages.admin.product.update', compact('product', 'categories'));
+        $sizes = Size::all();
+        return view('pages.admin.product.update', compact('product', 'categories', 'sizes'));
     }
 
     public function products(Request $request)
@@ -45,6 +47,7 @@ class ProductController extends Controller
         $query = Product::where('status', 'active');
 
         $search = $request->search['value'] ?? null;
+        
         if (!empty($search)) {
             $query->where(function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%");
@@ -80,68 +83,51 @@ class ProductController extends Controller
         $product = Product::create([
             'category_id' => $validated['category_id'],
             'name' => $validated['name'],
-            'description' => $validated['description'],
+            'description' => $validated['description'] ?? null,
             'price' => $validated['price'],
             'type' => $validated['type'],
-        ]);
-
-        if($request->hasFile('base_image')) {
-            $baseImagePath = $request->file('base_image')->store('products', 'public');
-            $validated['base_image'] = $baseImagePath;
-            $product->update(['base_image' => $baseImagePath]);
-        }
-
-        if($request->hasFile('image_url')) {
-            foreach ($validated['image_url'] as $image) {
-                $imagePath = $image->store('products', 'public');
-                ProductImage::create([
-                    'product_id' => $product->id,
-                    'image_url' => $imagePath,
-                ]);
-            }
-        }
-
-        ProductVarient::create([
-            'product_id' => $product->id,
-            'size_id' => $validated['size_id'],
-            'stock' => $validated['stock'],
-        ]);
-
-        return redirect()->route('admin.product.index')->with('success', 'Product created successfully.');
-    }
-
-    public function update(ProductRequest $request, $id)
-    {
-        $validated = $request->validated();
-
-        $product = Product::findOrFail($id);
-
-        $product->update([
-            'category_id' => $validated['category_id'],
-            'name' => $validated['name'],
-            'description' => $validated['description'],
-            'price' => $validated['price'],
-            'stock' => $validated['stock'],
-            'type' => $validated['type'],
+            'status' => 'active'
         ]);
 
         if ($request->hasFile('base_image')) {
             $baseImagePath = $request->file('base_image')->store('products', 'public');
-            $product->update(['base_image' => $baseImagePath]);
+            $product->base_image = $baseImagePath;
+            $product->save();
         }
 
-        if ($request->hasFile('image_url')) {
-            foreach ($request->file('image_url') as $file) {
-                $imagePath = $file->store('products', 'public');
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePath = $image->store('products', 'public');
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image_url'  => $imagePath,
+                    'image_url' => $imagePath
                 ]);
             }
         }
 
-        return redirect()->route('admin.product.index')->with('success', 'Product updated successfully.');
+        foreach($validated['size_id'] as $sizeId) {
+            $varient = ProductVarient::create([
+                'product_id' => $product->id,
+                'size_id' => $sizeId,
+            ]);
+
+            ProductStockPrice::create([
+                'product_id' => $product->id,
+                'product_varient_id' => $varient->id,
+                'price' => $validated['price'],
+                'stock' => $validated['stock'],
+            ]);
+        }
+
+        return redirect()->route('admin.product.index')->with('success', 'Product created successfully.');
+
     }
+
+    public function update(ProductRequest $request, $id)
+    {
+
+    }
+
 
     public function destroy($id)
     {
