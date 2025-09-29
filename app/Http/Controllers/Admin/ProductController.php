@@ -10,6 +10,7 @@ use App\Models\ProductImage;
 use App\Models\ProductStockPrice;
 use App\Models\ProductVarient;
 use App\Models\Size;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -47,7 +48,7 @@ class ProductController extends Controller
         $query = Product::where('status', 'active');
 
         $search = $request->search['value'] ?? null;
-        
+
         if (!empty($search)) {
             $query->where(function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%");
@@ -78,55 +79,60 @@ class ProductController extends Controller
 
     public function store(ProductRequest $request)
     {
-        $validated = $request->validated();
+        try {
+            $validated = $request->validated();
 
-        $product = Product::create([
-            'category_id' => $validated['category_id'],
-            'name' => $validated['name'],
-            'description' => $validated['description'] ?? null,
-            'price' => $validated['price'],
-            'type' => $validated['type'],
-            'status' => 'active'
-        ]);
+            $product = Product::create([
+                'category_id' => $validated['category_id'],
+                'name' => $validated['name'],
+                'description' => $validated['description'] ?? null,
+                'type' => $validated['type'],
+                'status' => 'active'
+            ]);
 
-        if ($request->hasFile('base_image')) {
-            $baseImagePath = $request->file('base_image')->store('products', 'public');
-            $product->base_image = $baseImagePath;
-            $product->save();
-        }
+            if ($request->hasFile('base_image')) {
+                $baseImagePath = $request->file('base_image')->store('products', 'public');
+                $product->update(['base_image' => $baseImagePath]);
+            }
 
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $imagePath = $image->store('products', 'public');
-                ProductImage::create([
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $imagePath = $image->store('products', 'public');
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image_url' => $imagePath
+                    ]);
+                }
+            }
+
+            foreach ($validated['size_id'] as $sizeId) {
+                $variant = ProductVarient::create([
                     'product_id' => $product->id,
-                    'image_url' => $imagePath
+                    'size_id' => $sizeId,
+                ]);
+
+                ProductStockPrice::create([
+                    'product_id' => $product->id,
+                    'product_varient_id' => $variant->id,
+                    'price' => $validated['price'][$sizeId],  
+                    'stock' => $validated['stock'][$sizeId],  
                 ]);
             }
-        }
 
-        foreach($validated['size_id'] as $sizeId) {
-            $varient = ProductVarient::create([
-                'product_id' => $product->id,
-                'size_id' => $sizeId,
+            return response()->json([
+            'success' => true,
+            'message' => 'Product created successfully.',
             ]);
-
-            ProductStockPrice::create([
-                'product_id' => $product->id,
-                'product_varient_id' => $varient->id,
-                'price' => $validated['price'],
-                'stock' => $validated['stock'],
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
             ]);
         }
-
-        return redirect()->route('admin.product.index')->with('success', 'Product created successfully.');
-
     }
 
-    public function update(ProductRequest $request, $id)
-    {
 
-    }
+    public function update(ProductRequest $request, $id) {}
 
 
     public function destroy($id)

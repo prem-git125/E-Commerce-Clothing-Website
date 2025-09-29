@@ -13,9 +13,7 @@
                 <tr class="text-center">
                     <td>Name</td>
                     <td>Slug</td>
-                    <td>Price</td>
                     <td>Type</td>
-                    <td>Stock</td>
                     <td>Actions</td>
                 </tr>
             </thead>
@@ -48,16 +46,8 @@
                         name: 'slug'
                     },
                     {
-                        data: 'price',
-                        name: 'price'
-                    },
-                    {
                         data: 'type',
                         name: 'type'
-                    },
-                    {
-                        data: 'stock',
-                        name: 'stock'
                     },
                     {
                         data: 'id',

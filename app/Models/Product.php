@@ -38,6 +38,11 @@ class Product extends Model
         return $this->hasMany(ProductVarient::class);
     }
 
+    public function stockPrices()
+    {
+        return $this->hasMany(ProductStockPrice::class, 'product_id', 'id');
+    }
+
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()->generateSlugsFrom('name')->saveSlugsTo('slug');

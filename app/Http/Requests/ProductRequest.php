@@ -29,10 +29,12 @@ class ProductRequest extends FormRequest
             'type' => 'required|in:men,female,kids,accessories,unisex',
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'size_id' => 'nullable|array',
+            'size_id' => 'required|array',
             'size_id.*' => 'exists:sizes,id',
-            'price' => 'required|numeric',
-            'stock' => 'required|numeric',
+            'price' => 'required|array',
+            'price.*' => 'required|numeric|min:0',
+            'stock' => 'required|array',
+            'stock.*' => 'required|numeric|min:0',
         ];
     }
 

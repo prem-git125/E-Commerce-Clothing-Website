@@ -1,6 +1,7 @@
 <!-- Jquery -->
 <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+
+{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script> --}}
 
 <!-- Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
@@ -23,45 +24,12 @@
             allowClear: true,
             width: '100%'
         });
+
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right", // top-right, bottom-left, etc.
+            "timeOut": "3000" // 3 seconds
+        }
     });
-
-    $(document).ready(function() {
-    let sizesSelected = [];
-
-    $('#select2').change(function() {
-        let selected = $(this).val() || [];
-        let container = $('#priceStockContainer');
-
-        container.find('.size-input').each(function() {
-            let sizeId = $(this).data('size-id').toString();
-            if (!selected.includes(sizeId)) {
-                $(this).remove();
-                sizesSelected = sizesSelected.filter(id => id !== sizeId);
-            }
-        });
-
-        selected.forEach(function(sizeId) {
-            if (!sizesSelected.includes(sizeId)) {
-                sizesSelected.push(sizeId);
-                let sizeName = $('#size_id option[value="' + sizeId + '"]').text();
-                let html = `
-                    <div class="size-input mb-3" data-size-id="${sizeId}">
-                        <h5>${sizeName}</h5>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Price</label>
-                                <input type="number" name="prices[${sizeId}]" class="form-control" step="0.01" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Stock</label>
-                                <input type="number" name="stocks[${sizeId}]" class="form-control" required>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                container.append(html);
-            }
-        });
-    });
-});
 </script>
