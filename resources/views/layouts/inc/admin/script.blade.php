@@ -17,6 +17,9 @@
 <!-- Select2 -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+<!-- Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 <script>
     $(document).ready(function() {
         $('#select2').select2({
@@ -24,12 +27,5 @@
             allowClear: true,
             width: '100%'
         });
-
-        toastr.options = {
-            "closeButton": true,
-            "progressBar": true,
-            "positionClass": "toast-top-right", // top-right, bottom-left, etc.
-            "timeOut": "3000" // 3 seconds
-        }
     });
 </script>

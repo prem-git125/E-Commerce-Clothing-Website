@@ -111,9 +111,8 @@
                     contentType: false,
                     success: function(response) {
                         if(response.success) {
-                            clg
-                            toastr.success(response.message);
-                            window.location.href = "{{ route('admin.product.index') }}";
+                           toastr.success(response.message);
+                           window.location.href = "{{ route('admin.product.index') }}";
                         }
                     },
                     error: function(xhr) {

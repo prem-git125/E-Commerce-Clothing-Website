@@ -24,10 +24,10 @@ class ProductRequest extends FormRequest
         return [
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string', 
-            'description' => 'nullable|string',
-            'base_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'description' => 'required|string|max:255',
+            'base_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'type' => 'required|in:men,female,kids,accessories,unisex',
-            'images' => 'nullable|array',
+            'images' => 'required|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'size_id' => 'required|array',
             'size_id.*' => 'exists:sizes,id',
@@ -50,15 +50,19 @@ class ProductRequest extends FormRequest
             'price.numeric' => 'The price must be a number.',
             'stock.required' => 'The stock field is required.',
             'stock.numeric' => 'The stock must be a number.',
+            'base_image.required' => 'The base image field is required.',
             'base_image.image' => 'The base image must be an image file.',
             'base_image.mimes' => 'The base image must be a file of type: jpeg, png, jpg, gif, svg.',
             'base_image.max' => 'The base image may not be greater than 2048 kilobytes.',
+            'images.required' => 'The images field is required.',
             'images.array' => 'The images must be an array of image files.',
             'images.*.image' => 'Each image must be an image file.',
             'images.*.mimes' => 'Each image must be a file of type: jpeg, png, jpg, gif, svg.',
             'images.*.max' => 'Each image may not be greater than 2048 kilobytes.',
             'size_id.array' => 'The size field must be an array of sizes.',
             'size_id.*.exists' => 'One or more selected sizes are invalid.',
+            'description.required' => 'The description field is required.',
+            'description.max' => 'The description may not be greater than 255 characters.',
         ];
     }
 
