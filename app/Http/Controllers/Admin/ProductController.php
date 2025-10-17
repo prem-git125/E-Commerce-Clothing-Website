@@ -32,8 +32,8 @@ class ProductController extends Controller
     {
         $product = Product::where('id', $id)->first();
         $categories = Category::all();
-        $sizes = Size::all();
-        return view('pages.admin.product.update', compact('product', 'categories', 'sizes'));
+        $sizes = Size::all();       
+        return view('pages.admin.product.update', compact('product', 'categories'));
     }
 
     public function products(Request $request)
@@ -82,13 +82,10 @@ class ProductController extends Controller
         try {
             $validated = $request->validated();
 
-            $product = Product::create([
-                'category_id' => $validated['category_id'],
-                'name' => $validated['name'],
-                'description' => $validated['description'] ?? null,
-                'type' => $validated['type'],
-                'status' => 'active'
-            ]);
+            $product = Product::create($validated);
+
+            $product->status = 'active';
+            $product->save();
 
             if ($request->hasFile('base_image')) {
                 $baseImagePath = $request->file('base_image')->store('products', 'public');
@@ -105,24 +102,11 @@ class ProductController extends Controller
                 }
             }
 
-            foreach ($validated['size_id'] as $sizeId) {
-                $variant = ProductVarient::create([
-                    'product_id' => $product->id,
-                    'size_id' => $sizeId,
-                ]);
-
-                ProductStockPrice::create([
-                    'product_id' => $product->id,
-                    'product_varient_id' => $variant->id,
-                    'price' => $validated['price'][$sizeId],  
-                    'stock' => $validated['stock'][$sizeId],  
-                ]);
-            }
-
             return response()->json([
-            'success' => true,
-            'message' => 'Product created successfully.',
+                'success' => true,
+                'message' => 'Product created successfully.',
             ]);
+
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
@@ -132,7 +116,48 @@ class ProductController extends Controller
     }
 
 
-    public function update(ProductRequest $request, $id) {}
+    public function update(ProductRequest $request, $id) {
+        try {
+            $validated = $request->validated();
+
+            $product = Product::find($id);
+
+            if (!$product) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Product not found.',
+                ]);
+            }
+
+            $product->update($validated);
+
+            if ($request->hasFile('base_image')) {
+                $baseImagePath = $request->file('base_image')->store('products', 'public');
+                $product->update(['base_image' => $baseImagePath]);
+            }
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $imagePath = $image->store('products', 'public');
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image_url' => $imagePath
+                    ]);
+                }
+            }
+
+            return response()->json([ 
+                'success' => true,
+                'message' => 'Product updated successfully.',
+            ]);
+
+        } catch(Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
 
 
     public function destroy($id)

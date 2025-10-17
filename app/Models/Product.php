@@ -20,7 +20,8 @@ class Product extends Model
         'price',
         'status',
         'type',
-        'base_image'
+        'base_image',
+        'wearing_type'
     ];
 
     public function category()
